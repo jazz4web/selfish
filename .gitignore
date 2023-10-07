@@ -3,3 +3,6 @@ __pycache__
 *.swp
 .env
 venv/
+selfish/static/vendor
+selfish/static/generic
+selfish/static/.webassets-cache
