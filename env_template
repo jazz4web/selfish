@@ -1,3 +1,6 @@
 DEBUG=True
+ASSETS_DEBUG=False
 SECRET_KEY='secret key'
 SESSION_LIFETIME=2592000
+SITE_NAME=Selfish
+SITE_DESCRIPTION='Selfish is a demo web application.'

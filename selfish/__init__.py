@@ -13,12 +13,22 @@ from starlette.templating import Jinja2Templates
 from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import assets
 
+from .api.main import Index
 from .main.views import show_favicon, show_index, show_robots
 
 base = os.path.dirname(__file__)
 static = os.path.join(base, 'static')
 templates = os.path.join(base, 'templates')
 settings = Config(os.path.join(os.path.dirname(base), '.env'))
+
+try:
+    from .addenv import SITE_NAME, SITE_DESCRIPTION
+    if SITE_NAME:
+        settings.file_values["SITE_NAME"] = SITE_NAME
+    if SITE_DESCRIPTION:
+        settings.file_values["SITE_DESCRIPTION"] = SITE_DESCRIPTION
+except ModuleNotFoundError:
+    pass
 
 
 class J2Templates(Jinja2Templates):
@@ -49,6 +59,8 @@ app = Starlette(
     routes=[Route('/', show_index, name='index'),
             Route('/favicon.ico', show_favicon, name='favicon.ico'),
             Route('/robots.txt', show_robots, name='robots.txt'),
+            Mount('/api', name='api', routes=[
+                Route('/index', Index, name='aindex')]),
             Mount('/static', app=StaticFiles(directory=static),name='static')],
     middleware=middleware)
 app.config = settings

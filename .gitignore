@@ -1,8 +1,10 @@
 __pycache__
 *.pyc
 *.swp
+*.backup
 .env
 venv/
+selfish/addenv.py
 selfish/static/vendor
 selfish/static/generic
 selfish/static/.webassets-cache

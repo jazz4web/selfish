@@ -1,5 +1,6 @@
 import os
 
+from minify_html import minify
 from starlette.responses import FileResponse, HTMLResponse, PlainTextResponse
 
 
@@ -15,6 +16,10 @@ async def show_favicon(request):
 
 
 async def show_index(request):
-    return request.app.jinja.TemplateResponse(
-        'main/index.html',
-        {'request': request})
+    html = minify(
+        request.app.jinja.get_template(
+            'main/index.html').render(
+            request=request),
+        minify_js=True, remove_processing_instructions=True,
+        do_not_minify_doctype=True, keep_spaces_between_attributes=True)
+    return HTMLResponse(html)
