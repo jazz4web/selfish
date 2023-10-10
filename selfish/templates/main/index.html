@@ -12,7 +12,9 @@
   {{ super() }}
   {% assets filters='cssmin', output='generic/css/main/index.css',
             'css/base.css',
+            'css/next-block.css',
             'css/mc780.css',
+            'css/top-flashed.css',
             'css/empty-message.css',
             'css/today-field.css' %}
     <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
@@ -21,7 +23,14 @@
 
 {% block templates %}
   {{ super() }}
-  <!-- here we are -->
+  <script id="indext" type="text/template">
+    <div id="idef" class="alert alert-warning">
+      <div class="today-field"></div>
+      <div class="message-text">
+        Сайт в стадии разработки, попробуйте зайти позже.
+      </div>
+    </div>
+  </script>
 {% endblock templates %}
 
 {% block scripts %}
@@ -30,6 +39,7 @@
             'js/check-mc.js',
             'js/render-tf.js',
             'js/show-index.js',
+            'js/close-topflashed.js',
             'js/main/index.js' %}
     <script src="{{ ASSET_URL }}"></script>
   {% endassets %}

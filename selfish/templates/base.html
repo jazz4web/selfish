@@ -74,12 +74,20 @@
   </div>
 </nav>
 <div id="main-container">
-  <div id="idef" class="alert alert-warning">
-    <div class="today-field"></div>
-    <div class="message-text">
-      Сайт в стадии разработки, попробуйте зайти позже.
+  {% if flashed %}
+    <div class="top-flashed-block">
+      {% for message in flashed %}
+        <div class="flashed-message
+                    {% if not loop.first %}next-block{% endif %}">
+          <div class="alert alert-warning">
+            <button class="close close-top-flashed" type="button">
+              &times;</button>
+            {{ message|safe }}
+          </div>
+        </div>
+      {% endfor %}
     </div>
-  </div>
+  {% endif %}
 </div>
 <footer id="footer">
   <div class="container-fluid">
