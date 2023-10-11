@@ -3,7 +3,7 @@ import os
 from minify_html import minify
 from starlette.responses import FileResponse, HTMLResponse, PlainTextResponse
 
-from ..common.flashed import get_flashed, set_flashed
+from ..common.flashed import get_flashed
 
 
 async def show_robots(request):
@@ -18,8 +18,6 @@ async def show_favicon(request):
 
 
 async def show_index(request):
-    await set_flashed(request, 'Это тестовое сообщение.')
-    await set_flashed(request, 'Второе тестовое сообщение.')
     html = minify(
         request.app.jinja.get_template(
             'main/index.html').render(
