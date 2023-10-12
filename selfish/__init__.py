@@ -3,6 +3,7 @@ import os
 import jinja2
 import typing
 
+from redis import asyncio as aioredis
 from starlette.applications import Starlette
 from starlette.config import Config
 from starlette.middleware import Middleware
@@ -13,7 +14,7 @@ from starlette.templating import Jinja2Templates
 from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import assets
 
-from .api.main import Index
+from .api.main import Captcha, Index
 from .captcha.views import show_captcha
 from .main.views import show_favicon, show_index, show_robots
 
@@ -62,8 +63,10 @@ app = Starlette(
             Route('/robots.txt', show_robots, name='robots.txt'),
             Route('/captcha/{suffix}', show_captcha, name='captcha'),
             Mount('/api', name='api', routes=[
-                Route('/index', Index, name='aindex')]),
+                Route('/index', Index, name='aindex'),
+                Route('/captcha', Captcha, name='acaptcha')]),
             Mount('/static', app=StaticFiles(directory=static),name='static')],
     middleware=middleware)
 app.config = settings
 app.jinja = J2Templates(directory=templates)
+app.rc = aioredis.from_url(settings.get('REDI'), decode_responses=True)

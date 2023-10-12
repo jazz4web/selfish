@@ -3,6 +3,7 @@ ASSETS_DEBUG=False
 DSN=
 USER=newbie
 DB=selfishdev
+REDI='redis://localhost:6379/0'
 SECRET_KEY='secret key'
 SESSION_LIFETIME=2592000
 SITE_NAME=Selfish
