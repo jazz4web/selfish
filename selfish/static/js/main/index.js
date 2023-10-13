@@ -9,6 +9,7 @@ $(function() {
     if (window.location.hash === '#get-password') {
       reg();
     }
+    $('body').on('click', '#login-submit', loginSubmit);
     $('body').on(
       'click', '#lcaptcha-reload',
       {field: '#lcaptcha-field', suffix: '#lsuffix', captcha: '#lcaptcha'},

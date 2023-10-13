@@ -14,6 +14,7 @@ from starlette.templating import Jinja2Templates
 from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import assets
 
+from .api.auth import Login
 from .api.main import Captcha, Index
 from .captcha.views import show_captcha
 from .main.views import show_favicon, show_index, show_robots
@@ -64,7 +65,8 @@ app = Starlette(
             Route('/captcha/{suffix}', show_captcha, name='captcha'),
             Mount('/api', name='api', routes=[
                 Route('/index', Index, name='aindex'),
-                Route('/captcha', Captcha, name='acaptcha')]),
+                Route('/captcha', Captcha, name='acaptcha'),
+                Route('/login', Login, name='alogin')]),
             Mount('/static', app=StaticFiles(directory=static),name='static')],
     middleware=middleware)
 app.config = settings

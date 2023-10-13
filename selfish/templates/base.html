@@ -115,6 +115,11 @@
   </div>
 </footer>
       </script>
+      <script id="ealertt" type="text/template">
+<div id="ealert" class="alert alert-danger to-be-hidden">
+  <%{ message }%>
+</div>
+      </script>
     {% endblock templates %}
   </head>
   <body>
@@ -125,6 +130,7 @@
                 'vendor/bootstrap/js/bootstrap.js',
                 'vendor/mustache.js',
                 'vendor/luxon.js',
+                'vendor/spark-md5.js',
                 'js/custom.js' %}
         <script src="{{ ASSET_URL }}"></script>
       {% endassets %}
