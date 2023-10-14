@@ -43,7 +43,7 @@ def draw_character(c, draw, color):
     font = random.choice(fonts)
     w = math.ceil(draw.textlength(c, direction='ltr', font=font))
     h = math.ceil(draw.textlength(c, direction='ttb', font=font))
-    dx = random.randint(0, 4)
+    dx = random.randint(1, 5)
     dy = random.randint(0, 6)
     image = Image.new('RGBA', (w + dx, h + dy))
     Draw(image).text((dx, dy), c, font=font, fill=color)

@@ -8,8 +8,10 @@ from ..common.flashed import set_flashed
 from ..common.pg import get_conn
 from .pg import filter_user
 from .redi import assign_uid, extract_cache
-from .tasks import rem_old_session
+from .tasks import change_pattern, rem_old_session
 from .tokens import create_login_token
+
+BADCAPTCHA = 'Тест провален, либо устарел, попробуйте снова.'
 
 
 class Login(HTTPEndpoint):
@@ -21,11 +23,13 @@ class Login(HTTPEndpoint):
             d.get('captcha'), d.get('token'), d.get('brkey'))
         res = {'token': None}
         if not cache:
-            res['message'] = 'Тест провален, либо устарел, попробуйте снова.'
+            res['message'] = BADCAPTCHA
             return JSONResponse(res)
         suffix, val = await extract_cache(request.app.rc, cache)
         if captcha != val:
-            res['message'] = 'Test провален, либо устарел, попробуйте снова.'
+            res['message'] = BADCAPTCHA
+            asyncio.ensure_future(
+                change_pattern(request.app.config, suffix))
             return JSONResponse(res)
         conn = await get_conn(request.app.config)
         user = await filter_user(conn, login)
@@ -36,6 +40,8 @@ class Login(HTTPEndpoint):
             request.session['_uid'] = d
             res['token'] = await create_login_token(request, rme, d)
             await set_flashed(request, f'Привет, {user.get("username")}!')
+            asyncio.ensure_future(
+                change_pattern(request.app.config, suffix))
             if rme:
                 asyncio.ensure_future(
                     rem_old_session(request, d, user.get('username')))
