@@ -19,13 +19,14 @@ async def assign_uid(rc, prefix, remember_me, user, brkey):
     await rc.expire(cache, expiration)
     data = f'data:{user.get("id")}'
     existed = await rc.exists(data)
-    await rc.hmset(data, {'id': user.get('id'),
-                          'username': user.get('username'),
-                          'registered':
-                            f"{user.get('last_published').isoformat()}Z"
-                          if user.get('last_published') else 0,
-                          'permissions': ','.join(user.get('permissions')),
-                          'many': 0})
+    await rc.hmset(
+        data, {'id': user.get('id'),
+               'username': user.get('username'),
+               'registered': f"{user.get('registered').isoformat()}Z",
+               'last_published': f"{user.get('last_published').isoformat()}Z"
+               if user.get('last_published') else 0,
+               'permissions': ','.join(user.get('permissions')),
+               'many': 0})
     if existed:
         await rc.hset(data, key='many', value=1)
         if remember_me:
