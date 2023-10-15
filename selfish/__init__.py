@@ -17,7 +17,8 @@ from webassets.ext.jinja2 import assets
 from .api.auth import Login
 from .api.main import Captcha, Index
 from .captcha.views import show_captcha
-from .main.views import show_favicon, show_index, show_robots
+from .errors import show_error
+from .main.views import show_avatar, show_favicon, show_index, show_robots
 
 base = os.path.dirname(__file__)
 static = os.path.join(base, 'static')
@@ -57,18 +58,25 @@ middleware = [
         SessionMiddleware,
         secret_key=settings.get('SECRET_KEY'),
         max_age=settings.get('SESSION_LIFETIME', cast=int))]
+
+errs = {403: show_error,
+        404: show_error,
+        405: show_error}
+
 app = Starlette(
     debug=settings.get('DEBUG', cast=bool),
     routes=[Route('/', show_index, name='index'),
             Route('/favicon.ico', show_favicon, name='favicon.ico'),
             Route('/robots.txt', show_robots, name='robots.txt'),
+            Route('/ava/{username}/{size:int}', show_avatar, name='ava'),
             Route('/captcha/{suffix}', show_captcha, name='captcha'),
             Mount('/api', name='api', routes=[
                 Route('/index', Index, name='aindex'),
                 Route('/captcha', Captcha, name='acaptcha'),
                 Route('/login', Login, name='alogin')]),
             Mount('/static', app=StaticFiles(directory=static),name='static')],
-    middleware=middleware)
+    middleware=middleware,
+    exception_handlers=errs)
 app.config = settings
 app.jinja = J2Templates(directory=templates)
 app.rc = aioredis.from_url(settings.get('REDI'), decode_responses=True)

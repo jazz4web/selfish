@@ -1,0 +1,31 @@
+{% extends "base-public.html" %}
+
+{% block title %}{{ error }}{% endblock title %}
+
+{% block styles %}
+  {{ super() }}
+  {% assets filters='cssmin', output='generic/css/errors/error.css',
+            'css/base.css',
+            'css/mc780.css',
+            'css/errors/error.css' %}
+    <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
+  {% endassets %}
+{% endblock styles %}
+
+{% block page_body %}
+  <h1>{{ error }}</h1>
+  <img alt="error"
+       src="{{ url_for('static', path='images/error.png') }}"
+       width="96" height="96">
+  <p>{{ reason }}</p>
+{% endblock page_body %}
+
+{% block scripts %}
+  {{ super() }}
+  {% assets filters='rjsmin', output='generic/js/errors/error.js',
+            'js/check-mc.js',
+            'js/public-footer.js',
+            'js/errors/error.js' %}
+    <script src="{{ ASSET_URL }}"></script>
+  {% endassets %}
+{% endblock scripts %}

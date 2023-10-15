@@ -1,0 +1,13 @@
+h1 {
+  margin: 0 0 6px;
+  color: #a94442;
+}
+
+p {
+  text-align: justify;
+  font-style: italic;
+}
+
+#footer-link {
+  font-style: italic;
+}

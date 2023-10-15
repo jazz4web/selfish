@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    {% block metas %}
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+    {% endblock metas %}
+
+    {% block title_tag %}
+      <title>
+        {{- request.app.config.get(
+          'SITE_NAME') }}: {% block title %}{% endblock title -%}
+      </title>
+    {% endblock title_tag %}
+
+    {% block styles %}
+      <link rel="icon" href="{{ url_for('favicon.ico') }}"
+            type="image/vnd.microsoft.icon">
+      {% assets filters='cssmin', output='generic/css/vendor.css',
+                'vendor/bootstrap/css/bootstrap.css',
+                'vendor/bootstrap/css/bootstrap-theme.css' %}
+        <link rel="stylesheet" href="{{ ASSET_URL }}">
+      {% endassets %}
+    {% endblock styles %}
+  </head>
+  <body>
+    <nav id="navigation" class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle"
+                  data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand"
+             href="{{ url_for('index') }}">
+            <img alt="logo"
+                 src="{{ url_for('static', path='images/logo.png') }}"
+                 width="28" height="28">
+          </a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {{ request.app.config.get('SITE_NAME') }} <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="">Авторы</a>
+                </li>
+                <li>
+                  <a href="">Темы</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div id="main-container" class="main-container">
+      {% block page_body %}{% endblock page_body %}
+    </div>
+    <footer id="footer">
+      <div class="container-fluid">
+        <div class="footer-block"></div>
+        <div class="footer-content">
+          <div class="footer-left text-left">
+            <img alt="right finger"
+                 src="{{ url_for('static', path='images/footer-left.png') }}"
+                 width="24" height="24">
+          </div>
+          <div class="footer-center text-center">
+            <a id="footer-link"
+               href="/">
+              <span
+                class="footer-link-text">{{ request.app.config.get(
+                          'SITE_NAME') }}</span>
+            </a>
+          </div>
+          <div class="footer-right text-right">
+            <img alt="left finger"
+                 src="{{ url_for('static', path='images/footer-right.png') }}"
+                 width="24" height="24">
+          </div>
+          <div class="footer-bottom"></div>
+        </div>
+        <div class="footer-bottom"></div>
+      </div>
+    </footer>
+    {% block scripts %}
+      {% assets filters='rjsmin', output='generic/js/vendor-pub.js',
+                'vendor/clipboard.js',
+                'vendor/jquery.js',
+                'vendor/bootstrap/js/bootstrap.js',
+                'vendor/luxon.js' %}
+        <script src="{{ ASSET_URL }}"></script>
+      {% endassets %}
+    {% endblock scripts %}
+  </body>
+</html>
