@@ -1,8 +1,9 @@
-E404 = '''Такой страницы у нас нет. Следуя по актуальным ссылкам сайта,
-вы не попадёте в подобную ситуацию.'''
+E404 = 'Такой страницы у нас нет.'
 
 
 async def show_error(request, exc):
+    if exc.status_code == 404 and exc.detail != E404:
+        exc.detail = E404
     return request.app.jinja.TemplateResponse(
         'errors/error.html',
         {'reason': exc.detail,

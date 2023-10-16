@@ -24,6 +24,10 @@ body {
   padding-top: 10px;
 }
 
+.current-user-name {
+  margin: 0 4px 0 5px;
+}
+
 #main-container {
   padding-top: 6px;
   padding-bottom: 6px;
