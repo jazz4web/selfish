@@ -15,7 +15,6 @@ function loginSubmit(event) {
       url: '/api/login',
       data: tee,
       success: function(data) {
-        console.log(data);
         if (data.token) {
           window.localStorage.setItem('token', data.token);
           $('.navbar-brand')[0].click();

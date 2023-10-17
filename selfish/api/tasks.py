@@ -6,6 +6,31 @@ from ..captcha.picturize.picture import generate_image
 from ..common.pg import get_conn
 
 
+async def rem_all_sessions(request, uid):
+    conn = await get_conn(request.app.config)
+    sessions = await conn.fetchval(
+        'SELECT sessions FROM users WHERE id = $1', uid) or list()
+    if sessions:
+        for each in range(len(sessions)):
+            if await request.app.rc.exists(sessions[each]):
+                await request.app.rc.delete(sessions[each])
+        await request.app.rc.delete(f'data:{uid}')
+        await conn.execute(
+            'UPDATE users SET sessions = $1 WHERE id = $2', list(), uid)
+    await conn.close()
+
+
+async def rem_current_session(config, cache, uid):
+    conn = await get_conn(config)
+    sessions = await conn.fetchval(
+        'SELECT sessions FROM users WHERE id = $1', uid) or list()
+    if cache in sessions:
+        sessions.remove(cache)
+        await conn.execute(
+            'UPDATE users SET sessions = $1 WHERE id = $2', sessions, uid)
+        await conn.close()
+
+
 async def change_pattern(conf, suffix):
     conn = await get_conn(conf)
     val = await check_val(conn)
