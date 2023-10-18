@@ -9,17 +9,17 @@ async def get_unique(conn, prefix, num):
         return res
 
 
-async def assign_uid(rc, prefix, remember_me, user, brkey):
+async def assign_uid(request, prefix, remember_me, user, brkey):
     if remember_me:
-        expiration = 30 * 24 * 60 * 60
+        expiration = request.app.config.get('SESSION_LIFETIME')
     else:
         expiration = 2 * 60 * 60
-    cache = await get_unique(rc, prefix, 9)
-    await rc.hmset(cache, {'id': user.get('id'), 'brkey': brkey})
-    await rc.expire(cache, expiration)
+    cache = await get_unique(request.app.rc, prefix, 9)
+    await request.app.rc.hmset(cache, {'id': user.get('id'), 'brkey': brkey})
+    await request.app.rc.expire(cache, expiration)
     data = f'data:{user.get("id")}'
-    existed = await rc.exists(data)
-    await rc.hmset(
+    existed = await request.app.rc.exists(data)
+    await request.app.rc.hmset(
         data, {'id': user.get('id'),
                'username': user.get('username'),
                'registered': f"{user.get('registered').isoformat()}Z",
@@ -28,16 +28,16 @@ async def assign_uid(rc, prefix, remember_me, user, brkey):
                'permissions': ','.join(user.get('permissions')),
                'many': 0})
     if existed:
-        await rc.hset(data, key='many', value=1)
+        await request.app.rc.hset(data, key='many', value=1)
         if remember_me:
-            await rc.persist(data)
-            await rc.expire(data, expiration)
+            await request.app.rc.persist(data)
+            await request.app.rc.expire(data, expiration)
         else:
-            if await rc.ttl(data) < expiration:
-                await rc.persist(data)
-                await rc.expire(data, expiration)
+            if await request.app.rc.ttl(data) < expiration:
+                await request.app.rc.persist(data)
+                await request.app.rc.expire(data, expiration)
     else:
-        await rc.expire(data, expiration)
+        await request.app.rc.expire(data, expiration)
     return cache
 
 

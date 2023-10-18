@@ -13,6 +13,17 @@ from ..errors import E404
 from .tools import resize
 
 
+async def show_profile(request):
+    html = minify(
+        request.app.jinja.get_template(
+            'main/profile.html').render(
+            request=request, username=request.path_params.get('username'),
+            flashed=await get_flashed(request)),
+        minify_js=True, remove_processing_instructions=True,
+        do_not_minify_doctype=True, keep_spaces_between_attributes=True)
+    return HTMLResponse(html)
+
+
 async def show_avatar(request):
     size = request.path_params['size']
     if size < 22 or size > 160:

@@ -1,6 +1,25 @@
 from validate_email import validate_email
 
-from ..auth.attri import permissions
+from ..auth.attri import get_group, permissions
+
+
+async def filter_target_user(request, conn, username):
+    query = await conn.fetchrow(
+        '''SELECT id, username, registered, last_visit, permissions,
+                  description, last_published FROM users
+             WHERE username = $1''', username)
+    if query:
+        return {'uid': query.get('id'),
+                'username': query.get('username'),
+                'group': await get_group(query.get('permissions')),
+                'registered': f'{query.get("registered").isoformat()}Z',
+                'last_visit': f'{query.get("last_visit").isoformat()}Z',
+                'permissions': query.get('permissions'),
+                'description': query.get('description'),
+                'last_published': f'{query.get("last_published").isoformat()}Z'
+                if query.get('last_published') else None,
+                'ava': request.url_for(
+                    'ava', username=query.get('username'), size=160)._url}
 
 
 async def filter_user(conn, login):

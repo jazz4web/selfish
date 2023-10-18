@@ -77,7 +77,7 @@ class Login(HTTPEndpoint):
         await conn.close()
         if user and pbkdf2_sha256.verify(
                 passwd, user.get('password_hash')):
-            d = await assign_uid(request.app.rc, 'uid:', rme, user, brkey)
+            d = await assign_uid(request, 'uid:', rme, user, brkey)
             request.session['_uid'] = d
             res['token'] = await create_login_token(request, rme, d)
             await set_flashed(request, f'Привет, {user.get("username")}!')

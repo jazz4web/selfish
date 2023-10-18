@@ -1,10 +1,13 @@
-function showIndex() {
+function showProfile() {
   let token = window.localStorage.getItem('token');
   let tee = token ? {'x-auth-token': token} : {};
   $.ajax({
     method: 'GET',
-    url: '/api/index',
+    url: '/api/profile',
     headers: tee,
+    data: {
+      username: username
+    },
     success: function(data) {
       console.log(data);
       if (token) {
@@ -19,11 +22,17 @@ function showIndex() {
       $('body').append(html);
       checkMC(800);
       $('body').on('click', '.close-top-flashed', closeTopFlashed);
-      let content = Mustache.render($('#indext').html(), data);
-      $('#main-container').append(content);
-      if ($('.today-field').length) renderTF('.today-field', dt);
+      if (data.message) {
+        let html = Mustache.render($('#ealertt').html(), data);
+        $('#main-container').append(html);
+        slidePage('#ealert');
+      } else {
+        let html = Mustache.render($('#profilet').html(), data);
+        $('#main-container').append(html);
+        formatDateTime($('#profile .date-field'));
+        renderLastSeen($('#profile .last-seen'));
+      }
     },
     dataType: 'json'
   });
 }
-
