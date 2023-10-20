@@ -6,7 +6,6 @@ function loginSubmit(event) {
     rme: $('#remember_me').is(':checked') ? 1 : 0,
     cache: $('#lsuffix').val(),
     captcha: $('#lcaptcha').val(),
-    token: window.localStorage.getItem('token'),
     brkey: checkBrowser()
   };
   if (tee.login && tee.passwd && tee.captcha && tee.cache) {

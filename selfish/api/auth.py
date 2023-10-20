@@ -3,17 +3,55 @@ import asyncio
 from passlib.hash import pbkdf2_sha256
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import JSONResponse
+from validate_email import validate_email
 
 from ..auth.cu import checkcu
 from ..common.flashed import set_flashed
 from ..common.pg import get_conn
-from .pg import filter_user
+from .pg import check_address, filter_user
 from .redi import assign_uid, extract_cache
 from .tasks import (
-    change_pattern, rem_all_sessions, rem_current_session, rem_old_session)
+    change_pattern, rem_all_sessions, rem_current_session, rem_old_session,
+    request_passwd)
 from .tokens import check_token, create_login_token
 
 BADCAPTCHA = 'Тест провален, либо устарел, попробуйте снова.'
+
+
+class GetPasswd(HTTPEndpoint):
+    async def post(self, request):
+        res = {'cu': None}
+        d = await request.form()
+        address, cache, captcha = (
+            d.get('address'), d.get('cache'), d.get('captcha'))
+        if not cache:
+            res['message'] = BADCAPTCHA
+            return JSONResponse(res)
+        suffix, val = await extract_cache(request.app.rc, cache)
+        if captcha != val:
+            res['message'] = BADCAPTCHA
+            asyncio.ensure_future(
+                change_pattern(request.app.config, suffix))
+            return JSONResponse(res)
+        if not validate_email(address):
+            res['message'] = 'Нужно ввести адрес электронной почты.'
+            return JSONResponse(res)
+        conn = await get_conn(request.app.config)
+        message, account = await check_address(request, conn, address)
+        await conn.close()
+        if message:
+            res['message'] = message
+            asyncio.ensure_future(
+                change_pattern(request.app.config, suffix))
+            return JSONResponse(res)
+        res['done'] = True
+        asyncio.ensure_future(
+            change_pattern(request.app.config, suffix))
+        asyncio.ensure_future(
+            request_passwd(request, account, address))
+        await set_flashed(
+            request, 'На ваш адрес выслано письмо с инструкциями.')
+        return JSONResponse(res)
 
 
 class LogoutAll(HTTPEndpoint):
@@ -58,10 +96,10 @@ class Logout(HTTPEndpoint):
 class Login(HTTPEndpoint):
     async def post(self, request):
         d = await request.form()
-        login, passwd, rme, cache, captcha, token, brkey = (
+        login, passwd, rme, cache, captcha, brkey = (
             d.get('login'), d.get('passwd'),
             int(d.get('rme')), d.get('cache'),
-            d.get('captcha'), d.get('token'), d.get('brkey'))
+            d.get('captcha'), d.get('brkey'))
         res = {'token': None}
         if not cache:
             res['message'] = BADCAPTCHA

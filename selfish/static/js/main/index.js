@@ -15,6 +15,8 @@ $(function() {
       reg();
     }
     $('body').on('click', '#login-submit', loginSubmit);
+    $('body').on('click', '#login-reg', loginReg);
+    $('body').on('click', '#reg-submit', regSubmit);
     $('body').on(
       'click', '#lcaptcha-reload',
       {field: '#lcaptcha-field', suffix: '#lsuffix', captcha: '#lcaptcha'},
