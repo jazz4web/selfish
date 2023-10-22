@@ -1,5 +1,6 @@
 import asyncio
 
+from datetime import datetime
 from passlib.hash import pbkdf2_sha256
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import JSONResponse
@@ -14,8 +15,75 @@ from .tasks import (
     change_pattern, rem_all_sessions, rem_current_session, rem_old_session,
     request_passwd)
 from .tokens import check_token, create_login_token
+from .tools import fix_bad_token
 
 BADCAPTCHA = 'Тест провален, либо устарел, попробуйте снова.'
+AUTHORIZED = '''Вы авторизованы, действие невозможно, нужно выйти и повторить
+переход по ссылке.'''
+
+
+class ResetPasswd(HTTPEndpoint):
+    async def get(self, request):
+        res = {'cu': None, 'aid': None}
+        auth = request.headers.get('x-auth-token')
+        cu = await checkcu(request, auth)
+        if cu:
+            res['cu'] = cu
+            res['message'] = AUTHORIZED
+            return JSONResponse(res)
+        token = request.headers.get('x-reg-token')
+        acc = await check_token(request.app.config, token)
+        if acc is None:
+            res['message'] = await fix_bad_token(request.app.config)
+            return JSONResponse(res)
+        conn = await get_conn(request.app.config)
+        acc = await conn.fetchrow(
+            '''SELECT accounts.id, accounts.user_id, accounts.requested,
+                      accounts.swap, users.username, users.last_visit
+                 FROM accounts, users
+                 WHERE accounts.id = $1 AND accounts.user_id = users.id''',
+            acc.get('aid'))
+        await conn.close()
+        if acc is None or acc.get('user_id') is None\
+                or acc.get('last_visit') > acc.get('requested') \
+                or acc.get('swap'):
+            res['message'] = 'Действие невозможно, брелок под сомнением.'
+            return JSONResponse(res)
+        res['aid'] = acc.get('id')
+        res['username'] = acc.get('username')
+        return JSONResponse(res)
+
+    async def post(self, request):
+        res = {'cu': None, 'done': None}
+        d = await request.form()
+        address, passwd, confirma, aid = (
+            d.get('address'), d.get('passwd'),
+            d.get('confirma'), d.get('aid'))
+        if not all((address, passwd, confirma, aid)):
+            res['message'] = 'Нужно заполнить все поля формы.'
+            return JSONResponse(res)
+        if passwd != confirma:
+            res['message'] = 'Пароли не совпадают.'
+            return JSONResponse(res)
+        conn = await get_conn(request.app.config)
+        acc = await conn.fetchrow(
+            '''SELECT a.id, a.address, a.user_id, u.username
+                 FROM accounts AS a, users AS u
+                 WHERE a.user_id = u.id AND a.id = $1''',
+            int(aid))
+        if acc.get('address') != address or acc.get('user_id') is None:
+            res['message'] = 'Действие невозможно, неверный запрос.'
+            await conn.close()
+            return JSONResponse(res)
+        await conn.execute(
+            '''UPDATE users SET password_hash = $1, last_visit = $2
+                 WHERE id = $3''',
+            pbkdf2_sha256.hash(passwd), datetime.utcnow(), acc.get('user_id'))
+        res['done'] = True
+        await conn.close()
+        await set_flashed(
+            request, f'Уважаемый {acc.get("username")}, у Вас новый пароль.')
+        return JSONResponse(res)
 
 
 class GetPasswd(HTTPEndpoint):

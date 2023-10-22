@@ -224,6 +224,83 @@
       </div>
     </div>
   </script>
+  <script id="rspt" type="text/template">
+    <div id="rspf" class="form-block content-block to-be-hidden">
+      <h3>Восстановите забытый пароль</h3>
+      <div class="today-field"></div>
+      <div class="form-help">
+        <p>
+          Уважаемый <% username %>, здесь Вы можете восстановить свой забытый
+          пароль, для этого заполните форму ниже. Введите в соответствующие
+          поля Ваш адрес электронной почты, на который Вы получили сообщение
+          со ссылкой на эту страницу, придумайте и введите новый пароль,
+          повторите его ввод в поле "Повторить" и нажмите кнопку "Обновить
+          пароль", будьте внимательны, после обновления пароля Вы сможете
+          войти в сервис только с новым паролем. Повторно запросить
+          восстановление пароля можно будет не ранее чем через {{ interval }}
+          часа.
+        </p>
+      </div>
+      <div class="form-form">
+        <form>
+          <div class="form-group">
+            <div class="form-label text-right">
+              <label for="rsaddress">Адрес эл.почты:</label>
+            </div>
+            <div class="form-input">
+              <input class="form-control"
+                     id="rsaddress"
+                     name="rsaddress"
+                     placeholder="введите свой адрес электронной почты"
+                     autocomplete="username"
+                     required
+                     type="text">
+            </div>
+            <div class="footer-bottom"></div>
+          </div>
+          <div class="form-group">
+            <div class="form-label text-right">
+              <label for="rspassword">Новый пароль:</label>
+            </div>
+            <div class="form-input">
+              <input class="form-control"
+                     id="rspassword"
+                     name="rspassword"
+                     placeholder="введите желаемый пароль"
+                     autocomplete="new-password"
+                     required
+                     type="password">
+            </div>
+            <div class="footer-bottom"></div>
+          </div>
+          <div class="form-group">
+            <div class="form-label text-right">
+              <label for="rsconfirm">Повторить:</label>
+            </div>
+            <div class="form-input">
+              <input class="form-control"
+                     id="rsconfirm"
+                     name="rsconfirm"
+                     placeholder="повторите пароль"
+                     autocomplete="new-password"
+                     required
+                     type="password">
+            </div>
+            <div class="footer-bottom"></div>
+          </div>
+          <div class="form-group">
+            <div class="form-input">
+              <button type="button"
+                      class="btn btn-primary btn-block"
+                      id="rsp-submit"
+                      name="rsp-submit"
+                      data-aid="<% aid %>">Обновить пароль</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </script>
 {% endblock templates %}
 
 {% block scripts %}
@@ -244,6 +321,9 @@
             'js/show-error.js',
             'js/logout.js',
             'js/logout-all.js',
+            'js/parse-hash.js',
+            'js/reset-passwd.js',
+            'js/reset-pwd.js',
             'js/main/index.js' %}
     <script src="{{ ASSET_URL }}"></script>
   {% endassets %}

@@ -25,6 +25,7 @@ $(function() {
       'click', '#rcaptcha-reload',
       {field: '#rcaptcha-field', suffix: '#rsuffix', captcha: '#rcaptcha'},
       captchaReload);
+    $('body').on('click', '#rsp-submit', resetPwd);
   }
   $(window).bind('hashchange', function() {
     if (window.localStorage.getItem('token')) {
@@ -42,5 +43,13 @@ $(function() {
         reg();
       }
     }
+    let rst = parseHash(window.location.hash, '#reset-password');
+    if (rst) {
+      resetPasswd(rst);
+    }
   });
+  let rst = parseHash(window.location.hash, '#reset-password');
+  if (rst) {
+    resetPasswd(rst);
+  }
 });
