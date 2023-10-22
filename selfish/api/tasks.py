@@ -6,12 +6,24 @@ from datetime import datetime
 from aiosmtplib import send
 from email.message import EmailMessage
 
+from ..auth.pg import create_user_record
 from ..captcha.common import check_val
 from ..captcha.picturize.picture import generate_image
 from ..common.pg import get_conn
 from .pg import define_acc, get_acc
 from .tokens import get_request_token
 from .tools import define_target_url
+
+
+async def create_user(config, username, password, aid):
+    conn = await get_conn(config)
+    now = datetime.utcnow()
+    perms = [each.get('permission') for each in await conn.fetch(
+        'SELECT permission FROM permissions WHERE init = true')]
+    user_id = await create_user_record(conn, username, password, perms, now)
+    await conn.execute(
+        'UPDATE accounts SET user_id = $1 WHERE id = $2', user_id, aid)
+    await conn.close()
 
 
 async def request_passwd(request, account, address):
