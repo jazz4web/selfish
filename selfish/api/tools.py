@@ -28,3 +28,5 @@ async def check_profile_permissions(request, cu, user, data):
              (permissions.CHUROLE in cu['permissions']
               and user['group'] != groups.keeper and
               user['group'] != groups.root))
+    data['description'] = (permissions.ART in cu['permissions'] and
+                           cu['id'] == user['uid']) or user['description']

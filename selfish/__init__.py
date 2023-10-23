@@ -15,7 +15,8 @@ from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import assets
 
 from .api.auth import (
-    GetPasswd, Login, Logout, LogoutAll, RequestPasswd, ResetPasswd)
+    ChangeAva, GetPasswd, Login, Logout,
+    LogoutAll, RequestPasswd, ResetPasswd)
 from .api.main import Captcha, Index, Profile
 from .captcha.views import show_captcha
 from .errors import show_error
@@ -84,7 +85,8 @@ app = Starlette(
                 Route('/profile', Profile, name='aprofile'),
                 Route('/request-reg', GetPasswd, name='agetpasswd'),
                 Route('/reset-passwd', ResetPasswd, name='aresetpwd'),
-                Route('/request-passwd', RequestPasswd, name='arequestpwd')]),
+                Route('/request-passwd', RequestPasswd, name='arequestpwd'),
+                Route('/change-ava', ChangeAva, name='chava')]),
             Mount('/static', app=StaticFiles(directory=static),name='static')],
     middleware=middleware,
     exception_handlers=errs)

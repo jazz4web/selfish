@@ -12,6 +12,7 @@
             'css/today-field.css',
             'css/content-block.css',
             'css/avatar.css',
+            'css/avatar-block.css',
             'css/main/profile.css' %}
     <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
   {% endassets %}
@@ -58,6 +59,137 @@
         </div>
         <div class="footer-bottom"></div>
       </div>
+      <% #description %>
+        <div class="content-block description-block next-block text-center">
+          <% #user.description %>
+            <p class="blog-description"><% user.description %></p>
+          <% /user.description %>
+          <% #owner %>
+            <% ^user.description %>
+              <div class="alert alert-warning alert-block">
+                Добавьте описание своего блога.
+              </div>
+            <% /user.description %>
+            <div class="description-options next-block">
+              <button type="button"
+                      title="добавьте или измените описание блога"
+                      class="btn btn-info"
+                      id="fix-description">
+                Изменить описание блога.
+              </button>
+            </div>
+          <% /owner %>
+        </div>
+        <% #owner %>
+          <div id="description-e"
+               class="content-block editor-block next-block to-be-hidden">
+            <div class="length-marker">
+              Осталось: <span
+              id="length-marker">500</span>
+            </div>
+            <div class="form-form">
+              <div class="form-group">
+                <textarea id="description-editor"
+                          placeholder="введите текст описания"
+                          class="form-control"
+                          rows="6"><% user.description %></textarea>
+              </div>
+              <div class="form-group submit-group">
+                <button id="description-submit"
+                        class="btn btn-info"
+                        type="button">
+                  Сохранить
+                </button>
+                <button type="button"
+                        id="cancel-description"
+                        class="btn btn-default">
+                  Отменить
+                </button>
+              </div>
+            </div>
+          </div>
+        <% /owner %>
+      <% /description %>
+      <% #user.description %>
+        <% #user.last_published %>
+          <div class="content-block blog-link-block next-block text-center">
+            <a href="/arts/a/<% user.username %>">
+              <% user.username %>&nbsp;блог
+            </a>
+          </div>
+        <% /user.last_published %>
+      <% /user.description %>
+      <% #owner %>
+        <div class="content-block next-block">
+          <div class="block-header slidable">
+            <h3 class="panel-title">Действия</h3>
+          </div>
+          <div class="block-body text-center">
+            <button id="emchange"
+                    type="button"
+                    class="btn btn-info">
+              Сменить адрес
+            </button>
+            <button id="changepwd"
+                    type="button"
+                    class="btn btn-info">
+              Сменить пароль
+            </button>
+            <button id="changeava"
+                    type="button"
+                    class="btn btn-info">
+              Сменить аватар
+            </button>
+          </div>
+        </div>
+      <% /owner %>
+    </div>
+  </script>
+  <script id="changeavat" type="text/template">
+    <div id="changeavaf">
+      <div class="content-block avatar-block">
+        <div class="block-header">
+          <h3 class="panel-title">Ваш аватар</h3>
+        </div>
+        <div class="block-body">
+          <div class="avatar"
+               style="background:url(/ava/<% cu %>/160)"></div>
+        </div>
+      </div>
+      <div class="content-block form-block next-block">
+        <div id="upload-form">
+          <div class="today-field"></div>
+          <div class="form-help">
+            <p>
+              Выберите файл изображения, процесс выгрузки начнётся
+              автоматически. Поддерживаются файлы JPEG, PNG и GIF форматов.
+              Максимальный размер файла ограничен - 200КиБ. Размер изображения
+              не должен превышать 200х200 пикселей. После выгрузки файл будет
+              верифицирован, а изображение установлено на Ваш аватар. Менять
+              изображение можно любое количество раз.
+            </p>
+          </div>
+          <div class="form-form">
+            <form id="ava-form" class="form" method="POST"
+                  role="form" novalidate
+                  enctype="multipart/form-data">
+              <div class="form-group">
+                <input accept="image/jpeg,image/png,image/gif"
+                       id="image"
+                       name="image"
+                       type="file">
+              </div>
+              <div class="form-group hidden">
+                <input class="btn btn-default"
+                       id="image-submit"
+                       name="image-submit"
+                       type="submit"
+                       value="Выгрузить">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </script>
 {% endblock templates %}
@@ -73,6 +205,10 @@
             'js/slide-page.js',
             'js/format-datetime.js',
             'js/render-lastseen.js',
+            'js/request-avachange.js',
+            'js/render-tf.js',
+            'js/change-ava.js',
+            'js/show-error.js',
             'js/main/profile.js' %}
     <script src="{{ ASSET_URL }}"></script>
   {% endassets %}
