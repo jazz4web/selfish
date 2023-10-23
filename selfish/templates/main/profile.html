@@ -13,6 +13,7 @@
             'css/content-block.css',
             'css/avatar.css',
             'css/avatar-block.css',
+            'css/labeled-form.css',
             'css/main/profile.css' %}
     <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
   {% endassets %}
@@ -192,6 +193,82 @@
       </div>
     </div>
   </script>
+  <script id="changepwdt" type="text/template">
+    <div id="changepwdf" class="form-block content-block to-be-hidden">
+      <h3>Смена пароля</h3>
+      <div class="today-field"></div>
+      <div class="form-help">
+        <p>
+          Уважаемый <% cu %>, для смены Вашего текущего пароля заполните форму
+          ниже. Введите в соответствующие поля Ваш текущий пароль, придумайте
+          и введите новый пароль, повторите ввод нового пароля, затем нажмите
+          кнопку "Сменить пароль", и Ваш текущий пароль будет заменён на новый.
+          В случае, если Вы забыли свой текущий пароль, пароль можно
+          восстановить в соответствующем разделе сервиса, для этого нужно
+          выйти из сервиса и проследовать по ссылке в главном меню
+          "Действия"->"Получить пароль".
+        </p>
+      </div>
+      <div class="form-form">
+        <form>
+          <div class="form-group">
+            <div class="form-label text-right">
+              <label for="currentpwd">Текущий пароль:</label>
+            </div>
+            <div class="form-input">
+              <input id="curpwd"
+                     name="curpwd"
+                     class="form-control"
+                     placeholder="введите свой текущий пароль"
+                     autocomplete="currentpwd"
+                     required
+                     type="password">
+            </div>
+            <div class="footer-bottom"></div>
+          </div>
+          <div class="form-group">
+            <div class="form-label text-right">
+              <label for="newpwd">Новый пароль:</label>
+            </div>
+            <div class="form-input">
+              <input id="newpwd"
+                     name="newpwd"
+                     class="form-control"
+                     placeholder="введите новый пароль"
+                     autocomplete="newpwd"
+                     required
+                     type="password">
+            </div>
+            <div class="footer-bottom"></div>
+          </div>
+          <div class="form-group">
+            <div class="form-label text-right">
+              <label for="newpwdconfirm">Повторить:</label>
+            </div>
+            <div class="form-input">
+              <input id="newpwdconfirm"
+                     name="newpwdconfirm"
+                     class="form-control"
+                     placeholder="повторите новый пароль"
+                     autocomplete="newpwdconfirm"
+                     required
+                     type="password">
+            </div>
+            <div class="footer-bottom"></div>
+          </div>
+          <div class="form-group">
+            <div class="form-input">
+              <button type="button"
+                      class="btn btn-primary btn-block"
+                      id="changepwd-submit">
+                Поменять пароль
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </script>
 {% endblock templates %}
 
 {% block scripts %}
@@ -209,6 +286,8 @@
             'js/render-tf.js',
             'js/change-ava.js',
             'js/show-error.js',
+            'js/change-pwd.js',
+            'js/create-newpwd.js',
             'js/main/profile.js' %}
     <script src="{{ ASSET_URL }}"></script>
   {% endassets %}
