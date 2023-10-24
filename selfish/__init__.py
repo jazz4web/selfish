@@ -39,22 +39,23 @@ try:
 except ModuleNotFoundError:
     pass
 
+DI = '''typing.Union[str, os.PathLike[typing.AnyStr],
+typing.Sequence[typing.Union[str,
+os.PathLike[typing.AnyStr]]]]'''.replace('\n', ' ')
+
 
 class J2Templates(Jinja2Templates):
-    def _create_env(self, directory: str) -> "jinja2.Environment":
-        @jinja2.pass_context
-        def url_for(
-                context: dict, name: str, **path_params: typing.Any) -> str:
-            request = context["request"]
-            return request.url_for(name, **path_params)
-
+    def _create_env(
+            self,
+            directory: DI, **env_options: typing.Any) -> "jinja2.Environment":
         loader = jinja2.FileSystemLoader(directory)
         assets_env = AssetsEnvironment(static, '/static')
         assets_env.debug = settings.get('ASSETS_DEBUG', bool)
-        env = jinja2.Environment(
-            loader=loader, autoescape=True, extensions=[assets])
+        env_options.setdefault("loader", loader)
+        env_options.setdefault("autoescape", True)
+        env_options.setdefault("extensions", [assets])
+        env = jinja2.Environment(**env_options)
         env.assets_environment = assets_env
-        env.globals["url_for"] = url_for
         return env
 
 
