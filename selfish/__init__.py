@@ -15,9 +15,11 @@ from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import assets
 
 from .api.auth import (
-    ChangeAva, ChangePasswd, GetPasswd, Login,
-    Logout, LogoutAll, RequestPasswd, ResetPasswd)
+    ChangeAva, ChangeEmail, ChangePasswd, GetPasswd,
+    Login, Logout, LogoutAll, RequestEm,
+    RequestPasswd, ResetPasswd)
 from .api.main import Captcha, Index, Profile
+from .api.tasks import check_swapped
 from .captcha.views import show_captcha
 from .errors import show_error
 from .main.views import (
@@ -59,6 +61,10 @@ class J2Templates(Jinja2Templates):
         return env
 
 
+async def run_before():
+    await check_swapped(settings)
+
+
 middleware = [
     Middleware(
         SessionMiddleware,
@@ -88,8 +94,11 @@ app = Starlette(
                 Route('/reset-passwd', ResetPasswd, name='aresetpwd'),
                 Route('/request-passwd', RequestPasswd, name='arequestpwd'),
                 Route('/change-ava', ChangeAva, name='chava'),
-                Route('/change-passwd', ChangePasswd, name='chpwd')]),
+                Route('/change-passwd', ChangePasswd, name='chpwd'),
+                Route('/request-email-change', RequestEm, name='rem-change'),
+                Route('/change-email', ChangeEmail, name='change-email')]),
             Mount('/static', app=StaticFiles(directory=static),name='static')],
+    on_startup=[run_before],
     middleware=middleware,
     exception_handlers=errs)
 app.config = settings

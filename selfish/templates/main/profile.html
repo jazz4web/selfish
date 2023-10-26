@@ -269,6 +269,67 @@
       </div>
     </div>
   </script>
+  <script id="changeemt" type="text/template">
+    <div id="changeemf" class="form-block content-block to-be-hidden">
+      <h3>Отправьте запрос на смену адреса</h3>
+      <div class="today-field"></div>
+      <div class="form-help">
+        <p>
+          Уважаемый <% cu %>, для смены адреса электронной почты
+          Вашего аккаунта необходимо заполнить форму ниже. Введите в
+          соответствующие поля Ваш новый адрес электронной почты и пароль,
+          нажмите кнопку "Отправить запрос". На Ваш новый адрес будет выслана
+          инструкция о дальнейших действиях, следуйте ей. Имейте ввиду,
+          что смену адреса и сброс пароля Вы можете запросить один раз
+          в {{ interval }} часов и не ранее чем через {{ interval }} часов
+          с момента регистрации.
+        </p>
+      </div>
+      <div class="form-form">
+        <form>
+          <div class="form-group">
+            <div class="form-label text-right">
+              <label for="chaddres">Адрес эл.почты:</label>
+            </div>
+            <div class="form-input">
+              <input id="chaddress"
+                     name="chaddress"
+                     class="form-control"
+                     placeholder="введите свой адрес электронной почты"
+                     autocomplete="username"
+                     required
+                     type="text">
+            </div>
+            <div class="footer-bottom"></div>
+          </div>
+          <div class="form-group">
+            <div class="form-label text-right">
+              <label for="chapasswd">Пароль:</label>
+            </div>
+            <div class="form-input">
+              <input class="form-control"
+                     id="chapasswd"
+                     name="chapasswd"
+                     placeholder="введите свой пароль"
+                     autocomplete="current-password"
+                     required
+                     type="password">
+            </div>
+            <div class="footer-bottom"></div>
+          </div>
+          <div class="form-group">
+            <div class="form-input">
+              <button type="button"
+                      class="btn btn-primary btn-block"
+                      id="chaddress-submit">
+                Отправить запрос
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </script>
 {% endblock templates %}
 
 {% block scripts %}
@@ -288,6 +349,8 @@
             'js/show-error.js',
             'js/change-pwd.js',
             'js/create-newpwd.js',
+            'js/request-em-form.js',
+            'js/request-em-change.js',
             'js/main/profile.js' %}
     <script src="{{ ASSET_URL }}"></script>
   {% endassets %}

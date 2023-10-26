@@ -29,6 +29,10 @@ $(function() {
     $('body').on('click', '#crp-submit', createUser);
   }
   $(window).bind('hashchange', function() {
+    let chem = parseHash(window.location.hash, '#change-email')
+    if (chem) {
+      changeEmail(chem);
+    }
     if (window.localStorage.getItem('token')) {
       if (window.location.hash === '#logout') {
         logout();
@@ -60,5 +64,9 @@ $(function() {
   let crt = parseHash(window.location.hash, '#request-password');
   if (crt) {
     requestPasswd(crt);
+  }
+  let chem = parseHash(window.location.hash, '#change-email')
+  if (chem) {
+    changeEmail(chem);
   }
 });

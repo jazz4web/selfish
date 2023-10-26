@@ -14,11 +14,12 @@ from .tools import resize
 
 
 async def show_profile(request):
+    interval = request.app.config.get('REQUEST_INTERVAL', cast=float)
     html = minify(
         request.app.jinja.get_template(
             'main/profile.html').render(
             request=request, username=request.path_params.get('username'),
-            flashed=await get_flashed(request)),
+            interval=interval, flashed=await get_flashed(request)),
         minify_js=True, remove_processing_instructions=True,
         do_not_minify_doctype=True, keep_spaces_between_attributes=True)
     return HTMLResponse(html)

@@ -8,5 +8,7 @@ $(function() {
     $('body').on('change', '#image', changeAva);
     $('body').on('click', '#changepwd', changePWD);
     $('body').on('click', '#changepwd-submit', createNewpwd);
+    $('body').on('click', '#emchange', requestEmF);
+    $('body').on('click', '#chaddress-submit', requestEmCh);
   }
 });
