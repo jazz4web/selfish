@@ -43,6 +43,19 @@ initials = {permissions.READ: True,
 
 roots = [permission for permission in permissions
          if permission != permissions.NOLOGIN]
+average = {name.lower(): permission
+    for name, permission in zip(permissions._fields, permissions)
+    if permission != permissions.NOLOGIN and
+    permission != permissions.ADMINISTER}
+curators = (permissions.NOLOGIN,
+            permissions.READ,
+            permissions.FOLLOW,
+            permissions.LIKE,
+            permissions.PM,
+            permissions.COMMENT,
+            permissions.ALIAS,
+            permissions.ART)
+keepers = curators + (permissions.BLOCK, permissions.CHUROLE)
 
 Group = namedtuple('Group', ['pariah',
                              'taciturn',
@@ -83,3 +96,13 @@ async def get_group(perms):
         return groups.taciturn
     if permissions.NOLOGIN in perms:
         return groups.pariah
+
+
+async def fix_extra_permissions(user, current):
+    if user['group'] == groups.keeper:
+        return [permission for permission in current
+                if permission not in keepers]
+    if user['group'] == groups.curator:
+        return [permission for permission in current
+                if permission not in curators]
+    return []

@@ -14,6 +14,8 @@
             'css/avatar.css',
             'css/avatar-block.css',
             'css/labeled-form.css',
+            'css/permissions.css',
+            'css/slidable.css',
             'css/main/profile.css' %}
     <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
   {% endassets %}
@@ -144,6 +146,26 @@
           </div>
         </div>
       <% /owner %>
+      <% #ch-perms %>
+        <div id="permissions-block"
+             class="content-block next-block">
+          <div class="block-header slidable">
+            <h3 class="panel-title">Разрешения <% user.username %></h3>
+          </div>
+          <div class="block-body">
+            <div class="form-form">
+              <%{ html }%>
+              <div class="form-group">
+                <input class="btn btn-primary btn-block"
+                       id="perms-submit"
+                       name="perms-submit"
+                       type="submit"
+                       value="Утвердить">
+              </div>
+            </div>
+          </div>
+        </div>
+      <% /ch-perms %>
     </div>
   </script>
   <script id="changeavat" type="text/template">
@@ -351,6 +373,8 @@
             'js/create-newpwd.js',
             'js/request-em-form.js',
             'js/request-em-change.js',
+            'js/checkbox.js',
+            'js/check-average.js',
             'js/main/profile.js' %}
     <script src="{{ ASSET_URL }}"></script>
   {% endassets %}

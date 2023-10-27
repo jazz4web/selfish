@@ -1,0 +1,18 @@
+#permissions-block .block-body {
+  border: 1px solid #fff;
+  margin: 2px 12px 0;
+}
+
+#permissions-block .form-form {
+  width: 50%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+#permissions-block .form-group {
+  margin: 6px 0 0;
+}
+
+#permissions-block .checkbox {
+  margin: 0;
+}

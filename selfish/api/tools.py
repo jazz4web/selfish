@@ -30,3 +30,15 @@ async def check_profile_permissions(request, cu, user, data):
               user['group'] != groups.root))
     data['description'] = (permissions.ART in cu['permissions'] and
                            cu['id'] == user['uid']) or user['description']
+    data['ch-perms'] = cu['username'] != user['username'] and \
+            (permissions.ADMINISTER in cu['permissions'] or
+             (permissions.CHUROLE in cu['permissions'] and
+              permissions.CHUROLE not in user['permissions']) or
+             (cu['group'] == groups.keeper and
+              user['group'] != groups.keeper and
+              permissions.ADMINISTER not in user['permissions']))
+    if data['ch-perms']:
+        data['html'] = request.app.jinja.get_template(
+            'main/perms.html').render(
+            request=request, cu=cu, user=user,
+            permissions=permissions, groups=groups)

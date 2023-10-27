@@ -1,0 +1,34 @@
+{% from "macros/_perms.html" import render_checkbox %}
+<form class="form">
+  {{ render_checkbox(
+    'nologin', user, permissions.NOLOGIN) }}
+  {{ render_checkbox(
+    'read', user, permissions.READ) }}
+  {{ render_checkbox(
+    'follow', user, permissions.FOLLOW) }}
+  {{ render_checkbox(
+    'like', user, permissions.LIKE) }}
+  {{ render_checkbox(
+    'pm', user, permissions.PM) }}
+  {{ render_checkbox(
+    'comment', user, permissions.COMMENT) }}
+  {{ render_checkbox(
+    'alias', user, permissions.ALIAS) }}
+  {{ render_checkbox(
+    'art', user, permissions.ART) }}
+  {% if permissions.ADMINISTER in cu['permissions'] or
+        cu['group'] == groups.keeper %}
+    {{ render_checkbox(
+      'block', user, permissions.BLOCK) }}
+    {{ render_checkbox(
+      'churole', user, permissions.CHUROLE) }}
+  {% endif %}
+  {% if permissions.ADMINISTER in cu['permissions'] %}
+    {{ render_checkbox(
+      'picture', user, permissions.PICTURE) }}
+    {{ render_checkbox(
+      'announce', user, permissions.ANNOUNCE) }}
+    {{ render_checkbox(
+      'administer', user, permissions.ADMINISTER) }}
+  {% endif %}
+</form>
