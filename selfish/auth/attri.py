@@ -86,7 +86,7 @@ async def get_group(perms):
         return groups.curator
     if permissions.ART in perms \
             or permissions.ANNOUNCE in perms \
-            or permissions.PICTURES in perms:
+            or permissions.PICTURE in perms:
         return groups.blogger
     if permissions.LIKE in perms \
             or permissions.COMMENT in perms \
