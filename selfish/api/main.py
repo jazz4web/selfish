@@ -6,7 +6,7 @@ from ..auth.attri import (
 from ..auth.cu import checkcu
 from ..common.flashed import set_flashed
 from ..common.pg import get_conn
-from .pg import filter_target_user
+from .pg import check_rel, filter_target_user
 from .redi import assign_cache, change_udata
 from .tools import check_profile_permissions, render_menu
 
@@ -35,7 +35,8 @@ class Profile(HTTPEndpoint):
                 await conn.close()
                 return JSONResponse(res)
             res['user'] = target
-            await check_profile_permissions(request, cu, target, res)
+            rel = await check_rel(conn, cu.get('id'), target.get('uid'))
+            await check_profile_permissions(request, cu, target, rel, res)
             if res['address']:
                 res['user']['address'] = await conn.fetchval(
                     'SELECT address FROM accounts WHERE user_id = $1',
@@ -96,6 +97,17 @@ class Profile(HTTPEndpoint):
                 await change_udata(
                     request.app.rc, data,
                     assigned or [permissions.NOLOGIN])
+                if permissions.FOLLOW not in assigned:
+                    await conn.execute(
+                        'DELETE FROM followers WHERE follower_id = $1',
+                        target['uid'])
+                if permissions.BLOCK in assigned:
+                    await conn.execute(
+                        'DELETE FROM blockers WHERE blocker_id = $1',
+                        target['uid'])
+                    await conn.execute(
+                        'DELETE FROM blockers WHERE target_id = $1',
+                        target['uid'])
             await conn.close()
             await set_flashed(
                 request, f'Разрешения {target["username"]} успешно изменены.')

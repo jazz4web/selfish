@@ -5,6 +5,23 @@ from validate_email import validate_email
 from ..auth.attri import get_group, permissions
 
 
+async def check_rel(conn, uid1, uid2):
+    friend = bool(await conn.fetchrow(
+        '''SELECT author_id, friend_id FROM friends
+             WHERE author_id = $1 AND friend_id = $2''', uid1, uid2))
+    follower = bool(await conn.fetchrow(
+        '''SELECT author_id, follower_id FROM followers
+             WHERE author_id = $1 AND follower_id = $2''', uid1, uid2))
+    blocker = bool(await conn.fetchrow(
+        '''SELECT target_id, blocker_id FROM blockers
+             WHERE target_id = $1 AND blocker_id = $2''', uid2, uid1))
+    blocked = bool(await conn.fetchrow(
+        '''SELECT target_id, blocker_id FROM blockers
+             WHERE target_id = $1 AND blocker_id = $2''', uid1, uid2))
+    return {'friend': friend, 'follower': follower,
+            'blocker': blocker, 'blocked': blocked}
+
+
 async def check_account(config, conn, account, address):
     length = timedelta(
         seconds=round(3600*config.get('TOKEN_LENGTH', cast=float)))

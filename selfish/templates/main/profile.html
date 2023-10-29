@@ -146,6 +146,37 @@
           </div>
         </div>
       <% /owner %>
+      <% ^owner %>
+        <% #acts %>
+          <div id="actions-block" class="content-block next-block">
+            <div class="block-header slidable">
+              <h3 class="panel-title">Действия</h3>
+            </div>
+            <div class="block-body text-center action-block">
+              <% #pm %>
+                <a href="" class="btn btn-info">приват</a>
+              <% /pm %>
+              <% #block %>
+                <button id="blocking-button"
+                        type="button"
+                        class="btn btn-danger">
+                  <% #rel.blocker %>cнять блок<% /rel.blocker %>
+                  <% ^rel.blocker %>блокировать<% /rel.blocker %>
+                </button>
+              <% /block %>
+              <% #mfriend %>
+                <button id="make-friend"
+                        type="button"
+                        data-uid="<% user.uid %>"
+                        class="btn btn-success">
+                  <% #rel.friend %>не дружить<% /rel.friend %>
+                  <% ^rel.friend %>дружить<% /rel.friend %>
+                </button>
+              <% /mfriend %>
+            </div>
+          </div>
+        <% /acts %>
+      <% /owner %>
       <% #ch-perms %>
         <div id="permissions-block"
              class="content-block next-block">
