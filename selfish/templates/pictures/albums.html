@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Ваши альбомы{% endblock title %}
+
+{% block styles %}
+  {{ super() }}
+  {% assets filters='cssmin', output='generic/css/pictures/albums.css',
+            'css/base.css',
+            'css/pictures/albums.css' %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}">
+  {% endassets %}
+{% endblock styles %}
+
+{% block templates %}
+  {{ super() }}
+{% endblock templates %}
+
+{% block scripts %}
+  {{ super() }}
+  {% assets filters='rjsmin', output='generic/js/pictures/albums.js',
+            'js/show-albums.js',
+            'js/check-browser.js',
+            'js/pictures/albums.js' %}
+    <script src="{{ ASSET_URL }}"></script>
+  {% endassets %}
+{% endblock scripts %}

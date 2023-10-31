@@ -16,6 +16,12 @@ async def render_menu(request, data):
     menu = {'cu': bool(data['cu'])}
     data['menu'] = menu
     if cu := data['cu']:
+        p = data['cu']['permissions']
+        menu['tools'] = data['cu'] and \
+            (permissions.ALIAS in p or permissions.PICTURE in p or
+             permissions.ANNOUNCE in p or permissions.ART in p)
+        menu['pictures'] = data['cu'] and permissions.PICTURE in p
+        menu['pictures_url'] = request.url_for('pictures:albums')._url
         menu['profile_url'] = request.url_for(
             'profile', username=cu.get('username'))._url
 
