@@ -1,0 +1,11 @@
+.statistic-table {
+  margin: 0;
+  width: 100%;
+  border-collapse: collapse;
+  font-style: italic;
+  text-shadow: 0 0 3px #d9dcec;
+}
+
+.statistic-table td {
+  padding: 8px 2px 2px;
+}

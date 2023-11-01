@@ -1,0 +1,19 @@
+<ul class="pagination pagination-sm">
+  <li {% if not pagination['prev'] %}class="disabled hidden"{% endif %}>
+    <a id="prev-link" href="#">&laquo;</a>
+  </li>
+  {% for p in pagination['pages'] %}
+    {% if p %}
+      <li {% if p == pagination['page'] %}class="active"{% endif %}>
+        <a class="page-link" href="#">{{ p }}</a>
+      </li>
+    {% else %}
+      <li class="disabled">
+        <a href="#">&hellip;</a>
+      </li>
+    {% endif %}
+  {% endfor %}
+  <li {% if not pagination['next'] %}class="disabled hidden"{% endif %}>
+    <a id="next-link" href="#">&raquo;</a>
+  </li>
+</ul>
