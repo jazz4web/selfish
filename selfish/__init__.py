@@ -19,13 +19,13 @@ from .api.auth import (
     Login, Logout, LogoutAll, RequestEm,
     RequestPasswd, ResetPasswd)
 from .api.main import Captcha, Index, Profile
-from .api.pictures import Albums
+from .api.pictures import Albums, Ustat
 from .api.tasks import check_swapped
 from .captcha.views import show_captcha
 from .errors import show_error
 from .main.views import (
     show_avatar, show_favicon, show_index, show_profile, show_robots)
-from .pictures.views import show_albums
+from .pictures.views import show_album, show_albums
 
 base = os.path.dirname(__file__)
 static = os.path.join(base, 'static')
@@ -99,9 +99,11 @@ app = Starlette(
                 Route('/change-passwd', ChangePasswd, name='chpwd'),
                 Route('/request-email-change', RequestEm, name='rem-change'),
                 Route('/change-email', ChangeEmail, name='change-email'),
-                Route('/pictures', Albums, name='apictures')]),
+                Route('/pictures', Albums, name='apictures'),
+                Route('/ustat', Ustat, name='ustat')]),
             Mount('/pictures', name='pictures', routes=[
-                Route('/', show_albums, name='albums')
+                Route('/', show_albums, name='albums'),
+                Route('/{suffix}', show_album, name='album')
                 ]),
             Mount('/static', app=StaticFiles(directory=static),name='static')],
     on_startup=[run_before],

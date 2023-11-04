@@ -31,7 +31,35 @@ function showAlbums() {
         $('#main-container').append(html);
         let ust = Mustache.render($('#ustatt').html(), data);
         $('#right-panel').append(ust);
+        if ($('.today-field').length) renderTF('.today-field', dt);
         formatDateTime($('.date-field'));
+        let pub = $('#pub-f');
+        pub.on('change', function() {
+          if ($(this).is(':checked')) {
+            uncheckBox('#priv-f');
+            uncheckBox('#ffo-f');
+          } else {
+            checkBox('#priv-f');
+          }
+        });
+        let priv = $('#priv-f');
+        priv.on('change', function() {
+          if ($(this).is(':checked')) {
+            uncheckBox('#pub-f');
+            uncheckBox('#ffo-f');
+          } else {
+            checkBox('#pub-f');
+          }
+        });
+        let ffo = $('#ffo-f');
+        ffo.on('change', function() {
+          if ($(this).is(':checked')) {
+            uncheckBox('#pub-f');
+            uncheckBox('#priv-f');
+          } else {
+            checkBox('#pub-f');
+          }
+        });
       }
     },
     dataType: 'json'

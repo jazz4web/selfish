@@ -1,0 +1,28 @@
+.items-table-block {
+  margin: 0;
+}
+
+.items-table {
+  margin: 0;
+  width: 100%;
+  border-collapse: collapse;
+  text-shadow: 0 0 3px #d9dcec;
+}
+
+.album-header-panel {
+  padding: 6px 0 6px 6px;
+  width: 80%;
+  cursor: pointer;
+}
+
+.items-table td {
+  padding: 4px;
+}
+
+.clicked-item {
+  background: #e6ebff;
+}
+
+.bordered {
+  border-bottom: 1px dotted #dddddd;
+}

@@ -6,6 +6,11 @@ from ..common.flashed import get_flashed
 from .attri import status
 
 
+async def show_album(request):
+    return HTMLResponse(
+        f'<div>Альбом: {request.path_params.get("suffix")}</div>')
+
+
 async def show_albums(request):
     html = minify(
         request.app.jinja.get_template(

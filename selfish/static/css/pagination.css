@@ -1,0 +1,10 @@
+.entity-pagination {
+  border-radius: 3px;
+  border: 1px solid #d3d3d3;
+  box-shadow: 0 0 8px #d3d3d3;
+  background: linear-gradient(to bottom, #fffef2, #f3f2e7);
+}
+
+.pagination {
+  margin: 5px 0 -2px 0;
+}
