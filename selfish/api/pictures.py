@@ -7,8 +7,33 @@ from ..common.aparsers import parse_page
 from ..common.flashed import set_flashed
 from ..common.pg import get_conn
 from ..pictures.attri import status
-from .pg import check_last, create_new_album, get_user_stat, select_albums
+from .pg import (
+    check_last, create_new_album, get_album, get_user_stat, select_albums)
 from .tools import render_menu
+
+
+class Albumstat(HTTPEndpoint):
+    async def get(self, request):
+        res = {'album': None}
+        cu = await checkcu(request, request.headers.get('x-auth-token'))
+        if cu is None:
+            res['message'] = 'Доступ ограничен, необходима авторизация.'
+            return JSONResponse(res)
+        if permissions.PICTURE not in cu['permissions']:
+            res['message'] = 'Доступ ограничен, у вас недостаточно прав.'
+            return JSONResponse(res)
+        suffix = request.query_params.get('suffix', None)
+        if suffix is None:
+            res['message'] = 'Не указан альбом.'
+            return JSONResponse(res)
+        conn = await get_conn(request.app.config)
+        album = await get_album(conn, cu.get('id'), suffix)
+        await conn.close()
+        if album is None:
+            res['message'] = 'Альбом не существует.'
+            return JSONResponse(res)
+        res['album'] = album
+        return JSONResponse(res)
 
 
 class Ustat(HTTPEndpoint):

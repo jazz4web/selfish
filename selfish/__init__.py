@@ -19,7 +19,7 @@ from .api.auth import (
     Login, Logout, LogoutAll, RequestEm,
     RequestPasswd, ResetPasswd)
 from .api.main import Captcha, Index, Profile
-from .api.pictures import Albums, Ustat
+from .api.pictures import Albums, Albumstat, Ustat
 from .api.tasks import check_swapped
 from .captcha.views import show_captcha
 from .errors import show_error
@@ -100,7 +100,8 @@ app = Starlette(
                 Route('/request-email-change', RequestEm, name='rem-change'),
                 Route('/change-email', ChangeEmail, name='change-email'),
                 Route('/pictures', Albums, name='apictures'),
-                Route('/ustat', Ustat, name='ustat')]),
+                Route('/ustat', Ustat, name='ustat'),
+                Route('/albumstat', Albumstat, name='albumstat')]),
             Mount('/pictures', name='pictures', routes=[
                 Route('/', show_albums, name='albums'),
                 Route('/{suffix}', show_album, name='album')

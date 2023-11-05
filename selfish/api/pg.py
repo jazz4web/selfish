@@ -9,6 +9,30 @@ from ..common.aparsers import iter_pages, parse_title, parse_units
 from ..common.random import get_unique_s
 
 
+async def get_album(conn, uid, suffix):
+    query = await conn.fetchrow(
+        '''SELECT id, title, created, suffix, state, volume FROM albums
+             WHERE suffix = $1 AND author_id = $2''',
+        suffix, uid)
+    if query:
+        num = await conn.fetchval(
+            'SELECT count(*) FROM pictures WHERE album_id = $1',
+            query.get('id'))
+        return {'id': query.get('id'),
+                'title': query.get('title'),
+                'created': f'{query.get("created").isoformat()}Z',
+                'suffix': query.get('suffix'),
+                'state': query.get('state'),
+                'volume_': query.get('volume'),
+                'volume': await parse_units(query.get('volume')),
+                'files': num,
+                'parse_t': len(query.get('title')) > 50,
+                'parsed22': await parse_title(query.get('title'), 22),
+                'parsed36': await parse_title(query.get('title'), 36),
+                'parsed50': await parse_title(query.get('title'), 50)}
+    return None
+
+
 async def create_new_album(conn, uid, title, state):
     now = datetime.utcnow()
     suffix = await get_unique_s(conn, 'albums', 8)

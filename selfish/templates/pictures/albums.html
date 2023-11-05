@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros/_pictures.html" import album_statistic %}
 
 {% block title %}Ваши альбомы{% endblock title %}
 
@@ -26,6 +27,7 @@
 
 {% block templates %}
   {{ super() }}
+  {{ album_statistic(status) }}
   <script id="ustatt" type="text/template">
     <div class="content-block">
       <div class="block-header">
@@ -245,6 +247,11 @@
             'js/checkbox.js',
             'js/reload.js',
             'js/show-user-stat.js',
+            'js/mark-input-error.js',
+            'js/show-album-stat.js',
+            'js/show-rename-form.js',
+            'js/show-state-form.js',
+            'js/rename-album.js',
             'js/pictures/albums.js' %}
     <script src="{{ ASSET_URL }}"></script>
   {% endassets %}

@@ -82,6 +82,7 @@ $(function() {
         if (!fform.is(':hidden')) fform.slideUp('slow');
         $('.clicked-item').removeClass('clicked-item');
         $(this).addClass('clicked-item');
+        showAlbumStat($(this).data().suffix);
       }
     });
     $('body').on('click', '.page-link', function(event) {
@@ -100,6 +101,25 @@ $(function() {
       event.preventDefault();
       let p = parseInt(event.data.page.trim()) - 1;
       window.location.assign('/pictures/?page=' + p);
+    });
+    $('body').on('click', '#album-first-page', function() {
+      $(this).blur();
+      window.location.assign('/pictures/');
+    });
+    $('body').on(
+      'keyup blur', '#title', {min: 3, max: 100, block: '.form-group'},
+      markInputError);
+    $('body').on('click', '#show-rename-form', showRenameForm);
+    $('body').on(
+      'keyup blur', '#title-change',
+      {min: 3, max: 100, block: '#rename-form'},
+      markInputError);
+    $('body').on('click', '#rename-album', {suffix: null}, renameAlbum);
+    $('body').on('click', '#show-state-form', showStateForm);
+    $('body').on('click', '.show-album', function() {
+      $(this).blur();
+      let url = '/pictures/' + $(this).data().dest;
+      window.location.assign(url);
     });
   }
 });

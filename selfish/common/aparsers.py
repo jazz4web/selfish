@@ -9,7 +9,7 @@ async def parse_units(volume):
         return f'{round(volume / pow(1024, 3), 2)} GiB'
 
 
-async def shorten_line(line, leght):
+async def shorten_line(line, length):
     if ' ' not in line or len(line.split(' ')[0] + '~') >= length:
         return line[:length - 1] + '~'
     result = ''
