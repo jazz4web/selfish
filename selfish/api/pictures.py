@@ -8,8 +8,56 @@ from ..common.flashed import set_flashed
 from ..common.pg import get_conn
 from ..pictures.attri import status
 from .pg import (
-    check_last, create_new_album, get_album, get_user_stat, select_albums)
+    check_last, create_new_album, get_album, get_user_stat,
+    select_albums, select_pictures)
 from .tools import render_menu
+
+
+class Album(HTTPEndpoint):
+    async def get(self, request):
+        cu = await checkcu(request, request.headers.get('x-auth-token'))
+        if cu is None:
+            res = {'message': 'Доступ ограничен, необходима авторизация.'}
+            return JSONResponse(res)
+        res = {'cu': cu}
+        await render_menu(request, res)
+        if permissions.PICTURE not in cu['permissions']:
+            res['message'] = 'Доступ ограничен, у вас недостаточно прав.'
+            return JSONResponse(res)
+        page = await parse_page(request)
+        conn = await get_conn(request.app.config)
+        target = await get_album(
+            conn, cu.get('id'), request.path_params.get('suffix'))
+        if target is None:
+            res['message'] = 'У вас нет такого альбома.'
+            await conn.close()
+            return JSONResponse(res)
+        last = await check_last(
+            conn, page,
+            request.app.config.get('PICTURES_PER_PAGE', cast=int, default=3),
+            'SELECT count(*) FROM pictures WHERE album_id = $1',
+            target.get('id'))
+        if page > last:
+            res['message'] = f'Всего страниц: {last}.'
+            await conn.close()
+            return JSONResponse(res)
+        pagination = await select_pictures(
+            conn, target.get('id'), page,
+            request.app.config.get('PICTURES_PER_PAGE', cast=int, default=3),
+            last)
+        if pagination:
+            res['html'] = {'album': request.app.jinja.get_template(
+                'pictures/album-list.html').render(
+                request=request, pagination=pagination)}
+            if pagination['next'] or pagination['prev']:
+                res['html']['pv'] = request.app.jinja.get_template(
+                    'pictures/pv.html').render(
+                    request=request, pagination=pagination)
+        res['album'], res['pagination'] = target, pagination
+        res['extra'] = res['pagination'] is None or \
+                       (res['pagination'] and res['pagination']['page'] == 1)
+        await conn.close()
+        return JSONResponse(res)
 
 
 class Albumstat(HTTPEndpoint):

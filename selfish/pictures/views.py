@@ -7,8 +7,17 @@ from .attri import status
 
 
 async def show_album(request):
-    return HTMLResponse(
-        f'<div>Альбом: {request.path_params.get("suffix")}</div>')
+    html = minify(
+        request.app.jinja.get_template(
+            'pictures/album.html').render(
+            request=request,
+            suffix=request.path_params.get('suffix'),
+            page=await parse_page(request),
+            status=status,
+            flashed=await get_flashed(request)),
+        minify_js=True, remove_processing_instructions=True,
+        do_not_minify_doctype=True, keep_spaces_between_attributes=True)
+    return HTMLResponse(html)
 
 
 async def show_albums(request):

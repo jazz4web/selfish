@@ -1,3 +1,21 @@
+import os
+
+
+async def parse_pic_filename(filename, length):
+    name, ext = os.path.splitext(filename)
+    if ' ' not in name and len(name) >= length:
+        if len(name) == length:
+            return filename
+        return name[:length] + '~' + ext
+    res = ''
+    for each in name.split(' '):
+        between = res + ' ' + each
+        if len(between.lstrip() + '~' + ext) > length + 4:
+            return res.lstrip() + '~' + ext
+        res = between
+    return filename
+
+
 async def parse_units(volume):
     if volume < 1024:
         return f'{volume} B'

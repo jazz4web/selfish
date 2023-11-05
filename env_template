@@ -19,3 +19,4 @@ MAIL_PASSWORD=############
 SUBJECT_PREFIX='[Selfish ] '
 SENDER='robot <noreply@codej.ru>'
 ALBUMS_PER_PAGE=3
+PICTURES_PER_PAGE=3

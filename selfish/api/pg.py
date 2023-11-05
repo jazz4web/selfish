@@ -5,8 +5,27 @@ from datetime import datetime, timedelta
 from validate_email import validate_email
 
 from ..auth.attri import get_group, permissions
-from ..common.aparsers import iter_pages, parse_title, parse_units
+from ..common.aparsers import (
+    iter_pages, parse_pic_filename, parse_title, parse_units)
 from ..common.random import get_unique_s
+
+
+async def select_pictures(conn, aid, page, per_page, last):
+    query = await conn.fetch(
+        '''SELECT filename, suffix FROM pictures
+             WHERE album_id = $1
+             ORDER BY uploaded DESC LIMIT $2 OFFSET $3''',
+        aid, per_page, per_page*(page-1))
+    if query:
+        return {'page': page,
+                'next': page + 1 if page + 1 <= last else None,
+                'prev': page - 1 or None,
+                'pages': await iter_pages(page, last),
+                'pictures': [{'filename': record.get('filename'),
+                              'parsed40': await parse_pic_filename(
+                                  record.get('filename'), 40),
+                              'suffix': record.get('suffix')}
+                             for record in query]}
 
 
 async def get_album(conn, uid, suffix):
