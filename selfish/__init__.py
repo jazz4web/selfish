@@ -24,7 +24,8 @@ from .api.tasks import check_swapped
 from .captcha.views import show_captcha
 from .errors import show_error
 from .main.views import (
-    show_avatar, show_favicon, show_index, show_profile, show_robots)
+    show_avatar, show_favicon, show_index, show_picture,
+    show_profile, show_robots)
 from .pictures.views import show_album, show_albums
 
 base = os.path.dirname(__file__)
@@ -84,6 +85,7 @@ app = Starlette(
             Route('/robots.txt', show_robots, name='robots.txt'),
             Route('/ava/{username}/{size:int}', show_avatar, name='ava'),
             Route('/captcha/{suffix}', show_captcha, name='captcha'),
+            Route('/picture/{suffix}', show_picture, name='picture'),
             Route('/profile/{username}', show_profile, name='profile'),
             Mount('/api', name='api', routes=[
                 Route('/index', Index, name='aindex'),
