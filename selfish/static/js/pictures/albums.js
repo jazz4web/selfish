@@ -116,6 +116,7 @@ $(function() {
       markInputError);
     $('body').on('click', '#rename-album', {suffix: null}, renameAlbum);
     $('body').on('click', '#show-state-form', showStateForm);
+    $('body').on('change', '#select-status', {suffix: null}, changeStatus);
     $('body').on('click', '.show-album', function() {
       $(this).blur();
       let url = '/pictures/' + $(this).data().dest;
