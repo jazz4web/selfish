@@ -15,9 +15,34 @@ from ..common.random import get_unique_s
 from ..pictures.attri import status
 from .checkimg import read_data
 from .pg import (
-    check_last, create_new_album, get_album, get_user_stat,
-    select_albums, select_pictures)
+    check_last, create_new_album, get_album, get_pic_stat,
+    get_user_stat, select_albums, select_pictures)
 from .tools import render_menu
+
+
+class Picstat(HTTPEndpoint):
+    async def get(self, request):
+        res = {'picture': None}
+        cu = await checkcu(request, request.headers.get('x-auth-token'))
+        if cu is None:
+            res['message'] = 'Доступ ограничен, необходима авторизация.'
+            return JSONResponse(res)
+        if permissions.PICTURE not in cu['permissions']:
+            res['message'] = 'Доступ ограничен, у вас недостаточно прав.'
+            return JSONResponse(res)
+        suffix = request.query_params.get('suffix', None)
+        if suffix is None:
+            res['message'] = 'Не указан суффикс изображения.'
+            return JSONResponse(res)
+        conn = await get_conn(request.app.config)
+        pic = await get_pic_stat(request, conn, cu.get('id'), suffix)
+        if pic is None:
+            res['message'] = 'Файл не существует.'
+            await conn.close()
+            return JSONResponse(res)
+        res['picture'] = pic
+        await conn.close()
+        return JSONResponse(res)
 
 
 class Album(HTTPEndpoint):
