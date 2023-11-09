@@ -122,5 +122,32 @@ $(function() {
       let url = '/pictures/' + $(this).data().dest;
       window.location.assign(url);
     });
+    $('body').on('click', '#find-submit', function() {
+      $(this).blur();
+      let suffix = $('#find-input').val();
+      let token = window.localStorage.getItem('token');
+      let tee = token ? {'x-auth-token': token} : {};
+      if (suffix) {
+        $.ajax({
+          method: 'GET',
+          url: '/api/search',
+          headers: tee,
+          data: {
+            suffix: suffix
+          },
+          success: function(data) {
+            if (data.album) {
+              window.location.assign(data.album);
+            } else {
+              let html = Mustache.render($('#ealertt').html(), data);
+              $('#main-container').append(html);
+              showError('#left-panel', data);
+              $('#right-panel').addClass('next-block');
+            }
+          },
+          dataType: 'json'
+        });
+      }
+    });
   }
 });

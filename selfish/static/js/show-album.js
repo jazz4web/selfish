@@ -15,7 +15,6 @@ function showAlbum(page, suffix) {
           window.location.reload();
         }
       }
-      console.log(data);
       let dt = luxon.DateTime.now();
       data.year = dt.year;
       let html = Mustache.render($('#baset').html(), data);

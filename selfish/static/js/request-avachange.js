@@ -7,7 +7,6 @@ function requestAvachange() {
       'x-auth-token': window.localStorage.getItem('token')
     },
     success: function(data) {
-      console.log(data);
       if (!data.cu) {
         let html = Mustache.render($('#ealertt').html(), data);
         slidePage('#ealert');

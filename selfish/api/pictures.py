@@ -8,7 +8,7 @@ from starlette.responses import JSONResponse
 
 from ..auth.attri import permissions
 from ..auth.cu import checkcu
-from ..common.aparsers import parse_filename, parse_page
+from ..common.aparsers import parse_filename, parse_page, parse_redirect
 from ..common.flashed import set_flashed
 from ..common.pg import get_conn
 from ..common.random import get_unique_s
@@ -18,6 +18,34 @@ from .pg import (
     check_last, create_new_album, get_album, get_pic_stat,
     get_user_stat, select_albums, select_pictures)
 from .tools import render_menu
+
+
+class Search(HTTPEndpoint):
+    async def get(self, request):
+        res = {'album': None}
+        cu = await checkcu(request, request.headers.get('x-auth-token'))
+        if cu is None:
+            res['message'] = 'Доступ ограничен, необходима авторизация.'
+            return JSONResponse(res)
+        if permissions.PICTURE not in cu['permissions']:
+            res['message'] = 'Доступ ограничен, у вас недостаточно прав.'
+            return JSONResponse(res)
+        suffix = request.query_params.get('suffix')
+        if suffix is None:
+            res['message'] = 'Пустой запрос не имеет смысла.'
+            return JSONResponse(res)
+        conn = await get_conn(request.app.config)
+        s = await conn.fetchval(
+            '''SELECT albums.suffix FROM albums, pictures
+                 WHERE albums.id = pictures.album_id
+                   AND pictures.suffix = $1 AND albums.author_id = $2''',
+            suffix, cu.get('id'))
+        await conn.close()
+        if s is None:
+            res['message'] = 'Нет такого файла.'
+            return JSONResponse(res)
+        res['album'] = request.url_for('pictures:album', suffix=s)._url
+        return JSONResponse(res)
 
 
 class Picstat(HTTPEndpoint):
@@ -46,6 +74,45 @@ class Picstat(HTTPEndpoint):
 
 
 class Album(HTTPEndpoint):
+    async def delete(self, request):
+        res = {'album': None}
+        d = await request.form()
+        cu = await checkcu(request, d.get('token'))
+        if cu is None:
+            res['message'] = 'Действие требует авторизации.'
+            return JSONResponse(res)
+        if permissions.PICTURE not in cu['permissions']:
+            res['message'] = 'Доступ ограничен, у вас недостаточно прав.'
+            return JSONResponse(res)
+        conn = await get_conn(request.app.config)
+        picture = await conn.fetchrow(
+            '''SELECT albums.volume AS avol,
+                      albums.suffix AS asuffix,
+                      pictures.volume AS pvol,
+                      pictures.album_id AS aid FROM albums, pictures
+                 WHERE albums.id = pictures.album_id
+                   AND albums.author_id = $1
+                   AND pictures.suffix = $2''',
+            cu.get('id'), d.get('picture'))
+        if picture is None:
+            res['message'] = 'Нет такого файла.'
+            await conn.close()
+            return JSONResponse(res)
+        await conn.execute(
+            'UPDATE albums SET changed = $1, volume = $2 WHERE id = $3',
+            datetime.utcnow(), picture.get('avol') - picture.get('pvol'),
+            picture.get('aid'))
+        await conn.execute(
+            'DELETE FROM pictures WHERE suffix = $1', d.get('picture'))
+        await conn.close()
+        res['album'] = picture.get('asuffix')
+        res['url'] = await parse_redirect(
+            request, int(d.get('page', '1')), int(d.get('last', '0')),
+            'pictures:album', suffix=picture.get('asuffix'))
+        await set_flashed(request, 'Файл успешно удалён.')
+        return JSONResponse(res)
+
+
     async def get(self, request):
         cu = await checkcu(request, request.headers.get('x-auth-token'))
         if cu is None:

@@ -6,7 +6,6 @@ function showIndex() {
     url: '/api/index',
     headers: tee,
     success: function(data) {
-      console.log(data);
       if (token) {
         if (!data.cu || data.cu.brkey != checkBrowser()) {
           window.localStorage.removeItem('token');

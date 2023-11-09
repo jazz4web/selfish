@@ -5,7 +5,6 @@ function logout() {
     url: '/api/logout',
     data: tee,
     success: function(data) {
-      console.log(data);
       if (data.result) {
         window.localStorage.removeItem('token');
         window.location.assign('/');

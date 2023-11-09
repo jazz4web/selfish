@@ -140,5 +140,7 @@ $(function() {
       $(this).blur();
       window.location.assign('/pictures/' + event.data.suffix);
     });
+    $('body')
+      .on('click', '.remove-button', {page: page, suffix: suffix}, removeThis);
   }
 });

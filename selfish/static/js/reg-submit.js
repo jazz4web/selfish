@@ -11,7 +11,6 @@ function regSubmit(event) {
       url: '/api/request-reg',
       data: tee,
       success: function(data) {
-        console.log(data);
         if (data.done) {
           $('.navbar-brand')[0].click();
         } else {
